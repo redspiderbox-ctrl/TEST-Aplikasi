@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Polytron Converter - TAP 1 Gambar Tidak Terpotong</title>
+    <title>Polytron Converter - Teks Berjalan</title>
 
     <!-- Library Eksternal -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -143,10 +143,13 @@
             margin-bottom: 10px;
         }
 
+        /* Button group dengan teks berjalan */
         .button-group {
             display: flex;
             gap: 10px;
             margin-top: 6px;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -185,6 +188,47 @@
             cursor: not-allowed;
         }
 
+        /* Teks Berjalan - Marquee modern */
+        .running-text {
+            flex: 1;
+            min-width: 150px;
+            background: linear-gradient(135deg, #1e293b, #2d3a4f);
+            border-radius: 40px;
+            padding: 6px 12px;
+            overflow: hidden;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .marquee {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 8s linear infinite;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #FFD966;
+            letter-spacing: 0.5px;
+        }
+
+        .marquee span {
+            display: inline-block;
+            padding-right: 30px;
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(0%);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Untuk hover pause */
+        .running-text:hover .marquee {
+            animation-play-state: paused;
+        }
+
         /* Preview area */
         .preview-area {
             width: 100%;
@@ -215,7 +259,7 @@
             margin: 0 auto;
         }
 
-        /* Grid 3x3 untuk TAP 1 - PERBAIKAN: gambar tidak terpotong */
+        /* Grid 3x3 untuk TAP 1 */
         .grid-3x3 {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -246,7 +290,6 @@
             position: relative;
         }
 
-        /* PERBAIKAN UTAMA: TAP 1 - gambar menggunakan object-contain agar tidak terpotong */
         .grid-3x3 .photo-card {
             min-height: 0;
         }
@@ -254,12 +297,11 @@
         .grid-3x3 .photo-card img {
             width: 100%;
             height: 100%;
-            object-fit: contain;  /* KUNCI: gambar utuh tidak terpotong, tidak melewati border */
+            object-fit: contain;
             display: block;
             background-color: #ffffff;
         }
 
-        /* TAP 2 - tetap menggunakan contain untuk konsistensi */
         .grid-custom .photo-card {
             flex-direction: column;
             justify-content: flex-start;
@@ -302,6 +344,19 @@
             }
             .photo-card {
                 border-width: 2px;
+            }
+        }
+
+        @media screen and (max-width: 550px) {
+            .button-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .running-text {
+                text-align: center;
+            }
+            .marquee {
+                animation-duration: 6s;
             }
         }
 
@@ -393,10 +448,11 @@
     </div>
 
     <div class="tabs">
-        <button class="tab active" data-tab="tab1">TAP 1 ( Label Normal )</button>
-        <button class="tab" data-tab="tab2">TAP 2 ( Label Panjang )</button>
+        <button class="tab active" data-tab="tab1">TAP 1 (3x3)</button>
+        <button class="tab" data-tab="tab2">TAP 2 (Rata Atas)</button>
     </div>
 
+    <!-- Panel TAP 1 -->
     <div id="panel1" class="panel active">
         <div class="upload-box" id="uploadBoxGrid">
             <div class="upload-icon">📂</div>
@@ -407,9 +463,18 @@
         <div class="button-group">
             <button id="downloadGridBtn" class="btn btn-primary" disabled>📄 Download PDF</button>
             <button id="resetGridBtn" class="btn btn-secondary" disabled>🗑️ Reset</button>
+            <!-- Teks Berjalan -->
+            <div class="running-text">
+                <div class="marquee">
+                    <span>✨ Uis Neno Nokan Kit ✨</span>
+                    <span>✨ Uis Neno Nokan Kit ✨</span>
+                    <span>✨ Uis Neno Nokan Kit ✨</span>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Panel TAP 2 -->
     <div id="panel2" class="panel">
         <div class="upload-box" id="uploadBoxPhoto">
             <div class="upload-icon">📂</div>
@@ -420,12 +485,20 @@
         <div class="button-group">
             <button id="downloadPhotoBtn" class="btn btn-primary" disabled>📄 Download PDF</button>
             <button id="resetPhotoBtn" class="btn btn-secondary" disabled>🗑️ Reset</button>
+            <!-- Teks Berjalan -->
+            <div class="running-text">
+                <div class="marquee">
+                    <span>✨ Uis Neno Nokan Kit ✨</span>
+                    <span>✨ Uis Neno Nokan Kit ✨</span>
+                    <span>✨ Uis Neno Nokan Kit ✨</span>
+                </div>
+            </div>
         </div>
     </div>
 
     <div id="previewContainer" class="preview-area">
         <div class="empty-preview">
-            📸 Belum ada data<br>Upload gambar atau PDF untuk mulai. By Om Berlin
+            📸 Belum ada data<br>Upload gambar atau PDF untuk mulai
         </div>
     </div>
 </div>
@@ -539,7 +612,6 @@
         }
     }
 
-    // RENDER PREVIEW - TAP 1 menggunakan object-fit: contain AGAR TIDAK TERPOTONG
     function renderPreview() {
         previewDiv.innerHTML = '';
         const images = (activeTab === 'grid') ? imagesGrid : imagesPhoto;
@@ -552,7 +624,6 @@
         emptyState.style.display = 'none';
 
         if (activeTab === 'grid') {
-            // TAP 1: 9 gambar per halaman
             const perPage = 9;
             for (let i = 0; i < images.length; i += perPage) {
                 const page = document.createElement('div');
@@ -565,7 +636,6 @@
                     box.className = 'photo-card';
                     const img = document.createElement('img');
                     img.src = imgSrc;
-                    // Memastikan gambar tidak terpotong
                     img.style.objectFit = 'contain';
                     img.style.width = '100%';
                     img.style.height = '100%';
@@ -583,7 +653,6 @@
                 previewDiv.appendChild(page);
             }
         } else {
-            // TAP 2: 3 gambar per halaman
             const perPage = 3;
             for (let i = 0; i < images.length; i += perPage) {
                 const page = document.createElement('div');
